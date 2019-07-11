@@ -1,0 +1,23 @@
+{
+  "name": "Order",
+  "base": "Entity",
+  "properties": {
+      "orderNum": {
+          "type": "string",
+          "id": true,
+          "generated": true
+      },
+      "customerNum": {
+          "type": "string",
+          "required": true
+      },
+      "customerEmail": {
+        "type": "string",
+        "required": true
+      },
+      "total": {
+        "type": "number",
+        "required": true
+      }
+  }
+}
