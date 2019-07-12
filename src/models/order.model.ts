@@ -7,7 +7,7 @@ export class Order extends Entity {
     id: true,
     generated: true,
   })
-  orderNum?: string;
+  orderNum: string;
 
   @property({
     type: 'string',
