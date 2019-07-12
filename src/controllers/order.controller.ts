@@ -19,13 +19,26 @@ import {
 } from '@loopback/rest';
 import {Order} from '../models';
 import {OrderRepository} from '../repositories';
+import {intercept, Interceptor} from '@loopback/core';
+
+const validateOrder: Interceptor = async (invocationCtx, next) => {
+  console.log('log: before-', invocationCtx.methodName);
+  const order: Order = new Order();
+  Object.assign(order, invocationCtx.args[0]);
+  if (order.orderNum.length !== 6) {
+    throw new Error('Invalid order number');
+  }
+  const result = await next();
+  return result;
+};
 
 export class OrderController {
   constructor(
     @repository(OrderRepository)
-    public orderRepository : OrderRepository,
+    public orderRepository: OrderRepository,
   ) {}
 
+  @intercept(validateOrder)
   @post('/orders', {
     responses: {
       '200': {
@@ -65,7 +78,8 @@ export class OrderController {
     },
   })
   async find(
-    @param.query.object('filter', getFilterSchemaFor(Order)) filter?: Filter<Order>,
+    @param.query.object('filter', getFilterSchemaFor(Order))
+    filter?: Filter<Order>,
   ): Promise<Order[]> {
     return await this.orderRepository.find(filter);
   }
