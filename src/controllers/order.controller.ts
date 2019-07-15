@@ -16,6 +16,7 @@ import {
   put,
   del,
   requestBody,
+  HttpErrors,
 } from '@loopback/rest';
 import {Order} from '../models';
 import {OrderRepository} from '../repositories';
@@ -26,7 +27,7 @@ const validateOrder: Interceptor = async (invocationCtx, next) => {
   const order: Order = new Order();
   Object.assign(order, invocationCtx.args[0]);
   if (order.orderNum.length !== 6) {
-    throw new Error('Invalid order number');
+    throw new HttpErrors.InternalServerError('Invalid order number');
   }
   const result = await next();
   return result;
