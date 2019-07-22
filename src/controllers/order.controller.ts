@@ -24,8 +24,13 @@ import {intercept, Interceptor} from '@loopback/core';
 
 const validateOrder: Interceptor = async (invocationCtx, next) => {
   console.log('log: before-', invocationCtx.methodName);
+
   const order: Order = new Order();
-  Object.assign(order, invocationCtx.args[0]);
+  if (invocationCtx.methodName == 'create')
+    Object.assign(order, invocationCtx.args[0]);
+  else if (invocationCtx.methodName == 'updateById')
+    Object.assign(order, invocationCtx.args[1]);
+
   if (order.orderNum.length !== 6) {
     throw new HttpErrors.InternalServerError('Invalid order number');
   }
@@ -119,6 +124,7 @@ export class OrderController {
     return await this.orderRepository.findById(id);
   }
 
+  @intercept(validateOrder)
   @patch('/orders/{id}', {
     responses: {
       '204': {
